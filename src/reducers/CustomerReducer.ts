@@ -1,8 +1,8 @@
-import {Customer} from "../models/Customer";
+import {CustomerModel} from "../models/CustomerModel";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const initialState : Customer[] = [];
+export const initialState : CustomerModel[] = [];
 
 const api = axios.create({
     baseURL : "http://localhost:3000/customer"
@@ -10,7 +10,7 @@ const api = axios.create({
 
 export const saveCustomer = createAsyncThunk(
     'customer/saveCustomer',
-    async (customer: Customer) => {
+    async (customer: CustomerModel) => {
         try {
             const response = await api.post('/add', customer);
             return response.data;
@@ -22,19 +22,19 @@ export const saveCustomer = createAsyncThunk(
 
 export const deleteCustomer = createAsyncThunk(
     'customer/deleteCustomer',
-    async (id : string) =>{
+    async (email : string) =>{
         try{
-            const response = await api.delete(`/delete/${id}`);
+            const response = await api.delete(`/delete/${email}`);
             return response.data;
         }catch(err){
             console.log(err);
         }
     }
-)
+);
 
 export const updateCustomer  = createAsyncThunk(
     'customer/updateCustomer',
-    async (customer : Customer) =>{
+    async (customer : CustomerModel) =>{
         try{
             const response = await api.put(`/update/${customer.id}`,customer);
             return response.data;
@@ -42,9 +42,9 @@ export const updateCustomer  = createAsyncThunk(
             console.log(err);
         }
     }
-)
+);
 
-export const getCustomers = createAsyncThunk(
+export const getAllCustomers = createAsyncThunk(
     'customer/getCustomers',
     async ()=>{
         try{
@@ -60,7 +60,7 @@ const customerSlice = createSlice({
     name : 'customer',
     initialState,
     reducers:{
-        addCustomer(state, action:PayloadAction<Customer>){
+        addCustomer(state, action:PayloadAction<CustomerModel>){
             state.push(action.payload);
         }
     },
@@ -80,7 +80,7 @@ const customerSlice = createSlice({
                 console.error("Failed to save customer:", action.payload);
             })
             .addCase(deleteCustomer.fulfilled, (state, action) => {
-               return state = state.filter((customer:Customer)=> customer.email !== action.payload.email);
+               return state = state.filter((customer:CustomerModel)=> customer.email !== action.payload.email);
             })
             .addCase(deleteCustomer.pending, (state, action) => {
                 console.log("Pending delete customer",action.payload);
@@ -90,7 +90,7 @@ const customerSlice = createSlice({
                 console.error("Failed to save customer:", action.payload);
             })
             .addCase(updateCustomer.fulfilled, (state, action) => {
-                const customer = state.find((customer:Customer) => customer.email === action.payload.email);
+                const customer = state.find((customer:CustomerModel) => customer.email === action.payload.email);
                 if (customer) {
                     customer.name = action.payload.name;
                     customer.phone = action.payload.phone;
@@ -100,20 +100,18 @@ const customerSlice = createSlice({
                 console.log("Pending update customer:", action.payload);
             });
         builder
-            .addCase(getCustomers.fulfilled, (state, action) => {
-                action.payload.map((customer:Customer) => {
-                    state.push(customer);
-                })
+            .addCase(getAllCustomers.fulfilled, (state, action) => {
+                return action.payload;
             })
-            .addCase(getCustomers.pending, (state, action) => {
+            .addCase(getAllCustomers.pending, (state, action) => {
                 console.log("Pending get customer:", action.payload);
             })
-            .addCase(getCustomers.rejected, (state, action) => {
+            .addCase(getAllCustomers.rejected, (state, action) => {
                 console.error("Failed to save customer:", action.payload);
             })
 
     }
 });
 
-export const {addCustomer}  = customerSlice.actions;
+// export const {addCustomer}  = customerSlice.actions;
 export default customerSlice.reducer;

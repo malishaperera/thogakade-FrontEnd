@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router";
 import {useState} from "react";
-import {Customer} from "../models/Customer";
+import {CustomerModel} from "../models/CustomerModel";
 import {Modal} from "../components/Modal";
 import { saveCustomer} from "../reducers/CustomerReducer";
 import {useDispatch} from "react-redux";
@@ -17,7 +17,7 @@ export function AddCustomer() {
     const [phone, setPhone] = useState("");
 
     function handleSubmit() {
-        const newCustomer = new Customer(name, email, phone);
+        const newCustomer = new CustomerModel(name, email, phone);
         dispatch(saveCustomer(newCustomer));
         navigate('/');
     }
