@@ -30,6 +30,5 @@ export function Modal(props,children) {
     <br/>
     <button onClick={props.handleSubmit}>{props.children}</button>
 </>
-)
-    ;
+);
 }

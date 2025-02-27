@@ -48,7 +48,7 @@ export const getAllCustomers = createAsyncThunk(
     'customer/getCustomers',
     async ()=>{
         try{
-            const response = await api.get('/view');
+            const response = await api.get('');
             return response.data;
         }catch(err){
             console.log(err);
